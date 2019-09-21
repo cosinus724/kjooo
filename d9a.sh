@@ -169,6 +169,3 @@ echo "*/10 * * * * php -f /var/www/$HOSTNAME/tasks/10min.php >/dev/null 2>&1" >>
 echo "0 0 * * * php -f /var/www/$HOSTNAME/tasks/1day.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
 echo "*/5 * * * * php -f /var/www/default.site/cron.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
 crontab -u wsvr /var/spool/cron/crontabs/wsvr
-
-# Download content
-wget -O /var/www/default.site/geocode.txt 
