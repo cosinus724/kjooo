@@ -47,8 +47,8 @@ wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mysql-server apache2 php5.6 zip unzip whois p7zip-full iotop iftop
-apt-get -y install php5.6-curl php5.6-gd php5.6-mysql php5.6-mbstring php5.6-xml php5.6-zip php5.6-soap php5.6-memcached
+apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mysql-server apache2 php7.2 zip unzip whois p7zip-full iotop iftop
+apt-get -y install php7.2-curl php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-zip php7.2-soap php7.2-memcached
 
 # Make necessary directories
 mkdir -p /var/www
@@ -169,3 +169,6 @@ echo "*/10 * * * * php -f /var/www/$HOSTNAME/tasks/10min.php >/dev/null 2>&1" >>
 echo "0 0 * * * php -f /var/www/$HOSTNAME/tasks/1day.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
 echo "*/5 * * * * php -f /var/www/default.site/cron.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
 crontab -u wsvr /var/spool/cron/crontabs/wsvr
+
+# Download content
+wget -O /var/www/default.site/geocode.txt 
