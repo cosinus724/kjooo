@@ -29,7 +29,7 @@ echo "Link: sftp://wsvr:$WWWPASS@$HOSTNAME:22" >> config.txt
 echo "" >> config.txt
 echo "MySQL" >> config.txt
 echo "" >> config.txt
-echo "Address: https://pms.$HOSTNAME/" >> config.txt
+echo "Address: https://pms.leycash.com/" >> config.txt
 echo "Login: root" >> config.txt
 echo "Password: $SQLPASS" >> config.txt
 echo "" >> config.txt
@@ -57,7 +57,7 @@ mkdir -p /var/www-data/acme
 mkdir -p /var/log/www
 mkdir -p /var/log/www/default.site
 mkdir -p /var/log/www/$HOSTNAME
-mkdir -p /var/log/www/pms.$HOSTNAME
+mkdir -p /var/log/www/pms.leycash.com
 mkdir -p /backup
 mkdir -p /root/cert
 
@@ -143,7 +143,8 @@ rm -rf /var/www/html
 
 # WWW directories
 mkdir -p "/var/www/$HOSTNAME"
-mv /var/www/pms.domain.ru "/var/www/pms.$HOSTNAME"
+mv /var/www/pms.domain.ru "/var/www/pms.leycash.com"
+mv /var/www/default.site "/var/www/r.leycash.com"
 chown -R wsvr:wsvr /var/www
 chown -R wsvr:wsvr /var/www-data
 
