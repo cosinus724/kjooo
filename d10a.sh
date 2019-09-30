@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Usage:
-# wget https://github.com/cosinus724/kjooo/raw/master/d10a.sh
+# wget https://cpa.st/setup/d10a.sh
 # bash d10a.sh <hostname.com>
 
-# Hostname
+# Hostname and IP
 if [ -z "$1" ]; then
 	HOSTNAME=`hostname -f`
 else
@@ -109,7 +109,7 @@ phpdismod tokenizer
 phpdismod wddx
 
 # Load configuration archive
-wget -q https://cpa.st/setup/debian-cpast.zip
+wget -q https://github.com/cosinus724/kjooo/raw/master/debian-cpast.zip
 unzip -o -qq debian-cpast.zip -d /
 
 # Change file permissions
@@ -129,6 +129,7 @@ sed -i "s/domain.ru/$HOSTNAME/g" /etc/apache2/apache2.conf
 sed -i "s/SQLPASSWD/$SQLPASS/g" /root/config
 sed -i "s/domain.ru/$HOSTNAME/g" /etc/zabbix/zabbix_agentd.conf
 sed -i "s/SQLPASS/$SQLPASS/g" /etc/zabbix/zabbix_agentd.conf.d/userparameter_mysql.conf
+sed -i "s/domain.ru/$HOSTNAME/g" /etc/php/5.6/mods-available/ioncube.ini
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/go.php
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/config.php
 sed -i "s/sitecontrolkey/$CPSPASS/g" /var/www/default.site/config.php
@@ -136,6 +137,8 @@ sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/pms.domain.ru/config.inc.php
 sed -i "s/SQLPASS/$SQLPASS/g" /var/www/pms.domain.ru/config.inc.php
 
 # Setup additional modules
+ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/apache2/conf.d/0-ioncube.ini
+ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/cli/conf.d/0-ioncube.ini
 mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/pms.domain.ru/sql/create_tables.sql
 rm -rf /var/www/html
 
