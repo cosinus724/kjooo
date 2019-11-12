@@ -49,8 +49,8 @@ wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php7.3-fpm nginx
-apt-get -y install php7.3-curl php7.3-gd php7.3-mysql php7.3-mbstring php7.3-xml php7.3-zip php7.3-soap php7.3-memcached
+apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php5.6-fpm nginx
+apt-get -y install php5.6-curl php5.6-gd php5.6-mysql php5.6-mbstring php5.6-xml php5.6-zip php5.6-soap php5.6-memcached
 
 # Make necessary directories
 mkdir -p /var/www
@@ -119,7 +119,7 @@ sed -i "s/domain.ru/$HOSTNAME/g" /etc/nginx/conf.d/altercpa.conf
 sed -i "s/SQLPASSWD/$SQLPASS/g" /root/config
 sed -i "s/domain.ru/$HOSTNAME/g" /etc/zabbix/zabbix_agentd.conf
 sed -i "s/SQLPASS/$SQLPASS/g" /etc/zabbix/zabbix_agentd.conf.d/userparameter_mysql.conf
-sed -i "s/domain.ru/$HOSTNAME/g" /etc/php/7.3/mods-available/ioncube.ini
+sed -i "s/domain.ru/$HOSTNAME/g" /etc/php/5.6/mods-available/ioncube.ini
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/go.php
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/config.php
 sed -i "s/sitecontrolkey/$CPSPASS/g" /var/www/default.site/config.php
@@ -127,8 +127,8 @@ sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/pms.domain.ru/config.inc.php
 sed -i "s/SQLPASS/$SQLPASS/g" /var/www/pms.domain.ru/config.inc.php
 
 # Setup additional modules
-ln -s /etc/php/7.3/mods-available/ioncube.ini /etc/php/7.3/fpm/conf.d/0-ioncube.ini
-ln -s /etc/php/7.3/mods-available/ioncube.ini /etc/php/7.3/cli/conf.d/0-ioncube.ini
+ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/fpm/conf.d/0-ioncube.ini
+ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/cli/conf.d/0-ioncube.ini
 mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/pms.domain.ru/sql/create_tables.sql
 rm -rf /var/www/html
 
@@ -157,7 +157,7 @@ fi
 
 # Restart all the services
 service nginx restart
-service php7.3-fpm restart
+service php5.6-fpm restart
 service mysql restart
 
 # Root cron processor
