@@ -47,8 +47,8 @@ wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php5.6 apache2
-apt-get -y install php5.6-curl php5.6-gd php5.6-mysql php5.6-mbstring php5.6-xml php5.6-zip php5.6-soap php5.6-memcached
+apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php7.1 apache2
+apt-get -y install php7.1-curl php7.1-gd php7.1-mysql php7.1-mbstring php7.1-xml php7.1-zip php7.1-soap php7.1-memcached
 
 # Make necessary directories
 mkdir -p /var/www
@@ -140,8 +140,8 @@ sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/pms.domain.ru/config.inc.php
 sed -i "s/SQLPASS/$SQLPASS/g" /var/www/pms.domain.ru/config.inc.php
 
 # Setup additional modules
-ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/apache2/conf.d/0-ioncube.ini
-ln -s /etc/php/5.6/mods-available/ioncube.ini /etc/php/5.6/cli/conf.d/0-ioncube.ini
+ln -s /etc/php/7.1/mods-available/ioncube.ini /etc/php/7.1/apache2/conf.d/0-ioncube.ini
+ln -s /etc/php/7.1/mods-available/ioncube.ini /etc/php/7.1/cli/conf.d/0-ioncube.ini
 mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/pms.domain.ru/sql/create_tables.sql
 rm -rf /var/www/html	
 
