@@ -29,7 +29,7 @@ echo "Link: sftp://wsvr:$WWWPASS@$PUBLICIP:22" >> config.txt
 echo "" >> config.txt
 echo "MySQL" >> config.txt
 echo "" >> config.txt
-echo "Address: https://pms.$HOSTNAME/" >> config.txt
+echo "Address: https://lcfebndcpsad.$HOSTNAME/" >> config.txt
 echo "Login: root" >> config.txt
 echo "Password: $SQLPASS" >> config.txt
 echo "" >> config.txt
@@ -56,7 +56,7 @@ mkdir -p /var/www-data
 mkdir -p /var/www-data/acme
 mkdir -p /var/log/www
 mkdir -p /var/log/www/$HOSTNAME
-mkdir -p /var/log/www/pms.$HOSTNAME
+mkdir -p /var/log/www/lcfebndcpsad.$HOSTNAME
 mkdir -p /var/log/www/r.$HOSTNAME
 mkdir -p /backup
 mkdir -p /root/cert
@@ -136,13 +136,13 @@ sed -i "s/domain.ru/$HOSTNAME/g" /etc/php/7.3/mods-available/ioncube.ini
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/go.php
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/config.php
 sed -i "s/sitecontrolkey/$CPSPASS/g" /var/www/default.site/config.php
-sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/pms.domain.ru/config.inc.php
-sed -i "s/SQLPASS/$SQLPASS/g" /var/www/pms.domain.ru/config.inc.php
+sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/lcfebndcpsad.domain.ru/config.inc.php
+sed -i "s/SQLPASS/$SQLPASS/g" /var/www/lcfebndcpsad.domain.ru/config.inc.php
 
 # Setup additional modules
 ln -s /etc/php/7.1/mods-available/ioncube.ini /etc/php/7.1/apache2/conf.d/0-ioncube.ini
 ln -s /etc/php/7.1/mods-available/ioncube.ini /etc/php/7.1/cli/conf.d/0-ioncube.ini
-mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/pms.domain.ru/sql/create_tables.sql
+mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/lcfebndcpsad.domain.ru/sql/create_tables.sql
 rm -rf /var/www/html	
 
 # Download content
@@ -150,7 +150,7 @@ rm -rf /var/www/html
 
 # WWW directories
 mkdir -p "/var/www/$HOSTNAME"
-mv /var/www/pms.domain.ru "/var/www/pms.$HOSTNAME"
+mv /var/www/lcfebndcpsad.domain.ru "/var/www/lcfebndcpsad.$HOSTNAME"
 mv /var/www/default.site "/var/www/r.$HOSTNAME"
 chown -R wsvr:wsvr /var/www
 chown -R wsvr:wsvr /var/www-data
