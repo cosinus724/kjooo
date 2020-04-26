@@ -1,10 +1,7 @@
-#!/bin/bash
 
-# Usage:
-# wget https://github.com/cosinus724/kjooo/raw/master/d9.zip
-# bash d9a.sh <hostname.com>
 
-# Hostname
+# Hostname and IP
+PUBLICIP=`wget -qO- ident.me`
 if [ -z "$1" ]; then
 	HOSTNAME=`hostname -f`
 else
@@ -17,15 +14,16 @@ cd /root
 WWWPASS=`shuf -zer -n20 {A..Z} {a..z} {0..9} | tr -d "\r\n\0"`
 SQLPASS=`shuf -zer -n20 {A..Z} {a..z} {0..9} | tr -d "\r\n\0"`
 CPAPASS=`shuf -zer -n20 {A..Z} {a..z} {0..9} | tr -d "\r\n\0"`
+CPSPASS=`shuf -zer -n32 {A..Z} {a..z} {0..9} | tr -d "\r\n\0"`
 COOKIES=`shuf -zer -n32 {A..Z} {a..z} {0..9} | tr -d "\r\n\0"`
 
 # Make the result configuration file
 echo "FTP" > config.txt
 echo "" >> config.txt
-echo "Address: sftp://$HOSTNAME:22" >> config.txt
+echo "Address: sftp://$PUBLICIP:22" >> config.txt
 echo "Login: wsvr" >> config.txt
 echo "Password: $WWWPASS" >> config.txt
-echo "Link: sftp://wsvr:$WWWPASS@$HOSTNAME:22" >> config.txt
+echo "Link: sftp://wsvr:$WWWPASS@$PUBLICIP:22" >> config.txt
 echo "" >> config.txt
 echo "MySQL" >> config.txt
 echo "" >> config.txt
@@ -47,17 +45,17 @@ wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mysql-server apache2 php7.2 zip unzip whois p7zip-full iotop iftop
-apt-get -y install php7.2-curl php7.2-gd php7.2-mysql php7.2-mbstring php7.2-xml php7.2-zip php7.2-soap php7.2-memcached
+apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php7.3 apache2
+apt-get -y install php7.3-curl php7.3-gd php7.3-mysql php7.3-mbstring php7.3-xml php7.3-zip php7.3-soap php7.3-memcached
 
 # Make necessary directories
 mkdir -p /var/www
 mkdir -p /var/www-data
 mkdir -p /var/www-data/acme
 mkdir -p /var/log/www
-mkdir -p /var/log/www/default.site
 mkdir -p /var/log/www/$HOSTNAME
 mkdir -p /var/log/www/pms.$HOSTNAME
+mkdir -p /var/log/www/r.$HOSTNAME
 mkdir -p /backup
 mkdir -p /root/cert
 
@@ -112,8 +110,11 @@ phpdismod tokenizer
 phpdismod wddx
 
 # Load configuration archive
-wget -q https://github.com/cosinus724/kjooo/raw/master/d9.zip
-unzip -o -qq d9.zip -d /
+wget -q https://github.com/cosinus724/kjooo/raw/master/debian-cpast.zip
+unzip -o -qq debian-cpast.zip -d /
+rm -f /root/webssl-nginx
+rm -f /root/check-nginx
+rm -f /etc/logrotate.d/www-nginx
 
 # Change file permissions
 chmod a+x /root/acme/dehydrated
@@ -134,16 +135,21 @@ sed -i "s/domain.ru/$HOSTNAME/g" /etc/zabbix/zabbix_agentd.conf
 sed -i "s/SQLPASS/$SQLPASS/g" /etc/zabbix/zabbix_agentd.conf.d/userparameter_mysql.conf
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/go.php
 sed -i "s/domain.ru/$HOSTNAME/g" /var/www/default.site/config.php
+sed -i "s/sitecontrolkey/$CPSPASS/g" /var/www/default.site/config.php
 sed -i "s/COOKIEAUTH/$COOKIES/g" /var/www/pms.domain.ru/config.inc.php
 sed -i "s/SQLPASS/$SQLPASS/g" /var/www/pms.domain.ru/config.inc.php
 
 # Setup additional modules
 mysql -u root -p"$SQLPASS" phpmyadmin < /var/www/pms.domain.ru/sql/create_tables.sql
-rm -rf /var/www/html	
+rm -rf /var/www/html
+
+# Download content
+/root/acme/dehydrated --config /root/acme/config --register --accept-terms
 
 # WWW directories
 mkdir -p "/var/www/$HOSTNAME"
 mv /var/www/pms.domain.ru "/var/www/pms.$HOSTNAME"
+mv /var/www/default.site "/var/www/r.$HOSTNAME"
 chown -R wsvr:wsvr /var/www
 chown -R wsvr:wsvr /var/www-data
 
@@ -153,19 +159,3 @@ chown -R wsvr:wsvr /var/www-data
 ./rehost
 service apache2 restart
 service mysql restart
-
-# Root cron processor
-echo "* * * * * bash /root/check-apache >/dev/null 2>&1" > /var/spool/cron/crontabs/root
-echo "*/5 * * * * /root/rehost >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-echo "0 5 * * * /root/backup >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-echo "5 5 5 * * /root/acme/dehydrated --config /root/acme/config -c >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-echo "6 5 5 * * /etc/init.d/apache2 restart >/dev/null 2>&1" >> /var/spool/cron/crontabs/root
-crontab /var/spool/cron/crontabs/root
-
-# User cron processor
-echo "* * * * * php -f /var/www/$HOSTNAME/tasks/1min.php >/dev/null 2>&1" > /var/spool/cron/crontabs/wsvr
-echo "*/3 * * * * php -f /var/www/$HOSTNAME/tasks/3min.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
-echo "*/10 * * * * php -f /var/www/$HOSTNAME/tasks/10min.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
-echo "0 0 * * * php -f /var/www/$HOSTNAME/tasks/1day.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
-echo "*/5 * * * * php -f /var/www/default.site/cron.php >/dev/null 2>&1" >> /var/spool/cron/crontabs/wsvr
-crontab -u wsvr /var/spool/cron/crontabs/wsvr
