@@ -45,8 +45,8 @@ wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
 echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
 apt-get -y update
 apt-get -y upgrade
-apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php7.3 apache2
-apt-get -y install php7.3-curl php7.3-gd php7.3-mysql php7.3-mbstring php7.3-xml php7.3-zip php7.3-soap php7.3-memcached
+apt-get -y install coreutils mc logrotate nano net-tools memcached curl httrack mariadb-server zip unzip whois p7zip-full iotop iftop php7.1 apache2
+apt-get -y install php7.1-curl php7.1-gd php7.1-mysql php7.1-mbstring php7.1-xml php7.1-zip php7.1-soap php7.1-memcached php7.1-intl
 
 # Make necessary directories
 mkdir -p /var/www
